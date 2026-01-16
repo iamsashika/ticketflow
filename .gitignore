@@ -1,0 +1,32 @@
+# Uploads
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Debug files
+debug_*.txt
+*.log
+
+# Database config (IMPORTANT: Don't commit your database credentials!)
+# You may want to create a config.example.php instead
+# config/database.php
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# PHP
+vendor/
+composer.lock
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
