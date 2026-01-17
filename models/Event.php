@@ -128,32 +128,43 @@ function event_create($data)
  */
 function event_update($id, $data)
 {
-    $sql = "UPDATE events SET 
-                title = :title, 
-                category_id = :category_id,
-                description = :description,
-                venue = :venue,
-                event_date = :event_date,
-                event_time = :event_time,
-                ticket_price = :ticket_price,
-                capacity = :capacity,
-                updated_at = NOW(),
-                status = :status
-            WHERE id = :id
-              AND is_deleted = 0";
+    $fields = [
+        'title = :title',
+        'category_id = :category_id',
+        'description = :description',
+        'venue = :venue',
+        'event_date = :event_date',
+        'event_time = :event_time',
+        'capacity = :capacity',
+        'status = :status',
+        'updated_at = NOW()'
+    ];
 
     $params = [
-        ':id'           => $id,
-        ':title'        => $data['title'],
-        ':category_id'  => $data['category_id'],
-        ':description'  => $data['description'],
-        ':venue'        => $data['venue'],
-        ':event_date'   => $data['event_date'],
-        ':event_time'   => $data['event_time'],
-        ':ticket_price' => $data['ticket_price'],
-        ':capacity'     => $data['capacity'],
-        ':status'       => $data['status'],
+        ':id'          => $id,
+        ':title'       => $data['title'],
+        ':category_id' => $data['category_id'],
+        ':description' => $data['description'],
+        ':venue'       => $data['venue'],
+        ':event_date'  => $data['event_date'],
+        ':event_time'  => $data['event_time'],
+        ':capacity'    => $data['capacity'],
+        ':status'      => $data['status'],
     ];
+
+
+
+    if (!empty($data['image'])) {
+        $fields[] = 'image = :image';
+        $params[':image'] = $data['image'];
+    }
+
+    $sql = "
+        UPDATE events SET
+            " . implode(", ", $fields) . "
+        WHERE id = :id
+          AND is_deleted = 0
+    ";
 
     return db_execute($sql, $params);
 }

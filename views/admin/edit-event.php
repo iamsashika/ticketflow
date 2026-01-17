@@ -70,147 +70,155 @@ require_once __DIR__ . '/../layout/header.php';
                         <input type="hidden" name="capacity" value="<?php echo $event['capacity']; ?>">
 
                         <!-- Event Summary Display -->
-                        <div class="form-group" style="background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.2); grid-column: span 2;">
-                            <label class="form-label" style="color: var(--primary-light); margin-bottom: 0.5rem;">Event Summary (Auto-calculated)</label>
-                            <div style="display: flex; gap: 2rem;">
-                                <div>
-                                    <span style="font-size: 0.85rem; color: var(--text-secondary); display: block;">Total Capacity</span>
-                                    <span id="displayTotalCapacity" style="font-size: 1.25rem; font-weight: bold; color: white;">
-                                        <?php echo $event['capacity']; ?> seats
-                                    </span>
+
+                        <?php if (false) { ?>
+                            <div class="form-group" style="background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.2); grid-column: span 2;">
+                                <label class="form-label" style="color: var(--primary-light); margin-bottom: 0.5rem;">Event Summary (Auto-calculated)</label>
+                                <div style="display: flex; gap: 2rem;">
+                                    <div>
+                                        <span style="font-size: 0.85rem; color: var(--text-secondary); display: block;">Total Capacity</span>
+                                        <span id="displayTotalCapacity" style="font-size: 1.25rem; font-weight: bold; color: white;">
+                                            <?php echo $event['capacity']; ?> seats
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 0.85rem; color: var(--text-secondary); display: block;">Starting Price</span>
+                                        <span id="displayMinPrice" style="font-size: 1.25rem; font-weight: bold; color: white;">
+                                            Rs. <?php echo number_format($event['ticket_price'], 2); ?>
+                                        </span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span style="font-size: 0.85rem; color: var(--text-secondary); display: block;">Starting Price</span>
-                                    <span id="displayMinPrice" style="font-size: 1.25rem; font-weight: bold; color: white;">
-                                        Rs. <?php echo number_format($event['ticket_price'], 2); ?>
-                                    </span>
-                                </div>
+                                <small style="display: block; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.8rem;">
+                                    * Values are automatically calculated from your Ticket Tiers below.
+                                </small>
                             </div>
-                            <small style="display: block; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.8rem;">
-                                * Values are automatically calculated from your Ticket Tiers below.
-                            </small>
-                        </div>
+                        <?php } ?>
                     </div>
 
                     <!-- TICKET TIERS SECTION -->
-                    <div class="form-group" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid rgba(99, 102, 241, 0.2);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <div>
-                                <label class="form-label" style="margin: 0;">🎫 Ticket Tiers *</label>
-                                <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
-                                    Manage ticket types. Removing a tier will delete it from the system.
-                                </small>
+                    <?php if (false) { ?>
+                        <div class="form-group" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid rgba(99, 102, 241, 0.2);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <label class="form-label" style="margin: 0;">🎫 Ticket Tiers *</label>
+                                    <small style="color: var(--text-secondary); display: block; margin-top: 0.25rem;">
+                                        Manage ticket types. Removing a tier will delete it from the system.
+                                    </small>
+                                </div>
+                                <button type="button" id="addTierBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+                                    + Add Tier
+                                </button>
                             </div>
-                            <button type="button" id="addTierBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
-                                + Add Tier
-                            </button>
-                        </div>
 
-                        <div id="ticketTiersContainer">
-                            <!-- Existing Tiers -->
-                            <?php if (!empty($ticketTypes)): ?>
-                                <?php foreach ($ticketTypes as $index => $tier): ?>
-                                    <div class="ticket-tier-row" data-tier-index="<?php echo $index; ?>">
-                                        <input type="hidden" name="tier_id[]" value="<?php echo $tier['id']; ?>">
+
+
+                            <div id="ticketTiersContainer">
+                                <!-- Existing Tiers -->
+                                <?php if (!empty($ticketTypes)): ?>
+                                    <?php foreach ($ticketTypes as $index => $tier): ?>
+                                        <div class="ticket-tier-row" data-tier-index="<?php echo $index; ?>">
+                                            <input type="hidden" name="tier_id[]" value="<?php echo $tier['id']; ?>">
+                                            <div style="background: rgba(51, 65, 85, 0.5); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid rgba(100, 116, 139, 0.3);">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                                    <strong style="color: var(--primary-light);">Tier #<?php echo $index + 1; ?></strong>
+                                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                                        <span style="font-size: 0.8rem; color: var(--text-secondary);">
+                                                            (<?php echo $tier['available_seats']; ?> avl / <?php echo $tier['capacity']; ?> cap)
+                                                        </span>
+                                                        <button type="button" class="remove-tier-btn" style="background: var(--danger-color); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem;">
+                                                            Remove
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="grid grid-2" style="gap: 1rem;">
+                                                    <div class="form-group" style="margin: 0;">
+                                                        <label class="form-label">Tier Name *</label>
+                                                        <input type="text" name="tier_name[]" class="form-input" required
+                                                            placeholder="e.g., VIP, Gold" value="<?php echo htmlspecialchars($tier['name']); ?>">
+                                                    </div>
+
+                                                    <div class="form-group" style="margin: 0;">
+                                                        <label class="form-label">Display Order</label>
+                                                        <input type="number" name="tier_order[]" class="form-input"
+                                                            min="0" placeholder="0" value="<?php echo $tier['display_order']; ?>">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group" style="margin-top: 1rem; margin-bottom: 1rem;">
+                                                    <label class="form-label">Description (Optional)</label>
+                                                    <textarea name="tier_description[]" class="form-textarea" rows="2"
+                                                        placeholder="Desc"><?php echo htmlspecialchars($tier['description']); ?></textarea>
+                                                </div>
+
+                                                <div class="grid grid-2" style="gap: 1rem;">
+                                                    <div class="form-group" style="margin: 0;">
+                                                        <label class="form-label">Price (Rs.) *</label>
+                                                        <input type="number" name="tier_price[]" class="form-input" required
+                                                            min="0" step="0.01" placeholder="0.00" value="<?php echo $tier['price']; ?>">
+                                                    </div>
+
+                                                    <div class="form-group" style="margin: 0;">
+                                                        <label class="form-label">Capacity *</label>
+                                                        <input type="number" name="tier_capacity[]" class="form-input" required
+                                                            min="1" placeholder="Seats" value="<?php echo $tier['capacity']; ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <!-- Default empty tier if none exist -->
+                                    <div class="ticket-tier-row" data-tier-index="0">
+                                        <input type="hidden" name="tier_id[]" value="">
                                         <div style="background: rgba(51, 65, 85, 0.5); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid rgba(100, 116, 139, 0.3);">
                                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                                <strong style="color: var(--primary-light);">Tier #<?php echo $index + 1; ?></strong>
-                                                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">
-                                                        (<?php echo $tier['available_seats']; ?> avl / <?php echo $tier['capacity']; ?> cap)
-                                                    </span>
-                                                    <button type="button" class="remove-tier-btn" style="background: var(--danger-color); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem;">
-                                                        Remove
-                                                    </button>
-                                                </div>
+                                                <strong style="color: var(--primary-light);">Tier #1</strong>
+                                                <button type="button" class="remove-tier-btn" style="background: var(--danger-color); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem;">
+                                                    Remove
+                                                </button>
                                             </div>
 
                                             <div class="grid grid-2" style="gap: 1rem;">
                                                 <div class="form-group" style="margin: 0;">
                                                     <label class="form-label">Tier Name *</label>
                                                     <input type="text" name="tier_name[]" class="form-input" required
-                                                        placeholder="e.g., VIP, Gold" value="<?php echo htmlspecialchars($tier['name']); ?>">
+                                                        placeholder="e.g., General Admission" value="General Admission">
                                                 </div>
 
                                                 <div class="form-group" style="margin: 0;">
                                                     <label class="form-label">Display Order</label>
                                                     <input type="number" name="tier_order[]" class="form-input"
-                                                        min="0" placeholder="0" value="<?php echo $tier['display_order']; ?>">
+                                                        min="0" value="0">
                                                 </div>
                                             </div>
 
                                             <div class="form-group" style="margin-top: 1rem; margin-bottom: 1rem;">
                                                 <label class="form-label">Description (Optional)</label>
                                                 <textarea name="tier_description[]" class="form-textarea" rows="2"
-                                                    placeholder="Desc"><?php echo htmlspecialchars($tier['description']); ?></textarea>
+                                                    placeholder="Desc"></textarea>
                                             </div>
 
                                             <div class="grid grid-2" style="gap: 1rem;">
                                                 <div class="form-group" style="margin: 0;">
                                                     <label class="form-label">Price (Rs.) *</label>
                                                     <input type="number" name="tier_price[]" class="form-input" required
-                                                        min="0" step="0.01" placeholder="0.00" value="<?php echo $tier['price']; ?>">
+                                                        min="0" step="0.01" value="0">
                                                 </div>
 
                                                 <div class="form-group" style="margin: 0;">
                                                     <label class="form-label">Capacity *</label>
                                                     <input type="number" name="tier_capacity[]" class="form-input" required
-                                                        min="1" placeholder="Seats" value="<?php echo $tier['capacity']; ?>">
+                                                        min="1" placeholder="Seats">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <!-- Default empty tier if none exist -->
-                                <div class="ticket-tier-row" data-tier-index="0">
-                                    <input type="hidden" name="tier_id[]" value="">
-                                    <div style="background: rgba(51, 65, 85, 0.5); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid rgba(100, 116, 139, 0.3);">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                            <strong style="color: var(--primary-light);">Tier #1</strong>
-                                            <button type="button" class="remove-tier-btn" style="background: var(--danger-color); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem;">
-                                                Remove
-                                            </button>
-                                        </div>
+                                <?php endif; ?>
+                            </div>
 
-                                        <div class="grid grid-2" style="gap: 1rem;">
-                                            <div class="form-group" style="margin: 0;">
-                                                <label class="form-label">Tier Name *</label>
-                                                <input type="text" name="tier_name[]" class="form-input" required
-                                                    placeholder="e.g., General Admission" value="General Admission">
-                                            </div>
-
-                                            <div class="form-group" style="margin: 0;">
-                                                <label class="form-label">Display Order</label>
-                                                <input type="number" name="tier_order[]" class="form-input"
-                                                    min="0" value="0">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group" style="margin-top: 1rem; margin-bottom: 1rem;">
-                                            <label class="form-label">Description (Optional)</label>
-                                            <textarea name="tier_description[]" class="form-textarea" rows="2"
-                                                placeholder="Desc"></textarea>
-                                        </div>
-
-                                        <div class="grid grid-2" style="gap: 1rem;">
-                                            <div class="form-group" style="margin: 0;">
-                                                <label class="form-label">Price (Rs.) *</label>
-                                                <input type="number" name="tier_price[]" class="form-input" required
-                                                    min="0" step="0.01" value="0">
-                                            </div>
-
-                                            <div class="form-group" style="margin: 0;">
-                                                <label class="form-label">Capacity *</label>
-                                                <input type="number" name="tier_capacity[]" class="form-input" required
-                                                    min="1" placeholder="Seats">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
                         </div>
-                    </div>
+                    <?php } ?>
 
                     <!-- Status -->
                     <div class="form-group">
