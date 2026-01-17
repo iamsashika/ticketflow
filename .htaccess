@@ -1,0 +1,12 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Set base directory
+RewriteBase /Event/
+
+# Don't rewrite if file or directory exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite all other requests to index.php
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
