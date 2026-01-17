@@ -157,7 +157,8 @@ require_once __DIR__ . '/../layout/header.php';
                     name="cardNumber"
                     placeholder="5399 0000 0000 0000"
                     maxlength="19"
-                    required>
+                    required
+                    value="4890111570487942">
                 <small class="error" id="cardError"></small>
             </div>
 
@@ -169,6 +170,7 @@ require_once __DIR__ . '/../layout/header.php';
                         name="expiry"
                         placeholder="MM/YY"
                         maxlength="5"
+                        value="10/25"
                         required>
                     <small class="error" id="expiryError"></small>
                 </div>
@@ -180,6 +182,7 @@ require_once __DIR__ . '/../layout/header.php';
                         name="cvv"
                         placeholder="***"
                         maxlength="3"
+                        value="123"
                         required>
                     <small class="error" id="cvvError"></small>
                 </div>

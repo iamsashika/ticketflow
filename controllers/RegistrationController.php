@@ -1,59 +1,82 @@
 <?php
 
-/**
- * Registration Controller
- * -----------------------
- */
+# Registration Controller
 
+
+// Register for Event
 function registration_register($eventId)
 {
+
     if (!is_logged_in()) {
         redirect('/user/login');
     }
 
-    // 🔐 PAYMENT GUARD
+
     if (empty($_SESSION['payment_success'])) {
         $_SESSION['error'] = "Please complete payment before registering.";
         redirect('/event/details/' . $eventId);
     }
 
-    // Single-use payment flag
+
     unset($_SESSION['payment_success']);
 
-    $user = $_SESSION['user_id'];
+    $userId     = $_SESSION['user_id'];
     $quantities = $_POST['quantities'] ?? [];
 
-    $itemsToBuy = [];
+    $itemsToBuy   = [];
     $totalTickets = 0;
 
-    foreach ($quantities as $tId => $qty) {
+    foreach ($quantities as $ticketTypeId => $qty) {
         $qty = (int)$qty;
-        if ($qty <= 0) continue;
 
-        $ticketType = ticket_type_get_by_id($tId);
-        if ($ticketType && $ticketType['event_id'] == $eventId) {
-            $itemsToBuy[] = [
-                'ticket_type_id' => $tId,
-                'quantity'       => $qty
-            ];
-            $totalTickets += $qty;
+        // Skip empty quantities
+        if ($qty <= 0) {
+            continue;
         }
+
+        // Fetch ticket type
+        $ticketType = ticket_type_get_by_id($ticketTypeId);
+
+        // Validate ticket belongs to event
+        if (!$ticketType || (int)$ticketType['event_id'] !== (int)$eventId) {
+            continue;
+        }
+
+
+        $availableSeats = (int)$ticketType['available_seats'];
+
+        if ($qty > $availableSeats) {
+            $_SESSION['error'] =
+                "Only {$availableSeats} seat(s) available for '{$ticketType['name']}'. 
+                 Please adjust your selection.";
+
+            redirect('/event/details/' . $eventId);
+        }
+
+        $itemsToBuy[] = [
+            'ticket_type_id' => $ticketTypeId,
+            'quantity'       => $qty
+        ];
+
+        $totalTickets += $qty;
     }
 
+    // Ensure at least one ticket selected
     if (empty($itemsToBuy)) {
         $_SESSION['error'] = "Please select at least one ticket.";
         redirect('/event/details/' . $eventId);
     }
 
+    // Create registrations
     try {
-        $result = registration_create_batch($user, $eventId, $itemsToBuy);
+        $result = registration_create_batch($userId, $eventId, $itemsToBuy);
 
         if ($result) {
             $_SESSION['success'] =
-                "Registration successful! You purchased $totalTickets ticket(s).";
+                "Registration successful! You purchased {$totalTickets} ticket(s).";
             redirect('/my-registrations');
         } else {
-            $_SESSION['error'] = "Registration failed.";
+            $_SESSION['error'] = "Registration failed. Please try again.";
             redirect('/event/details/' . $eventId);
         }
     } catch (Exception $e) {
@@ -63,20 +86,17 @@ function registration_register($eventId)
 }
 
 
-/**
- * Cancel registration
- * -------------------
- */
+// Cancel Registration
 function registration_cancel_action($registrationId)
 {
 
 
-    // 1. Check Login
+
     if (!is_logged_in()) {
         redirect('/user/login');
     }
 
-    // 2. Cancel
+
     $result = registration_cancel($registrationId);
 
     if ($result) {
