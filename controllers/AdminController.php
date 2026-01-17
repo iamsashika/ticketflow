@@ -167,6 +167,19 @@ function admin_editEvent($id)
             'status'      => $_POST['status'],
         ];
 
+        if (!empty($_FILES['event_image']['name'])) {
+            $ext = pathinfo($_FILES['event_image']['name'], PATHINFO_EXTENSION);
+            $imageName = 'event_' . time() . '_' . uniqid() . '.' . $ext;
+
+            move_uploaded_file(
+                $_FILES['event_image']['tmp_name'],
+                __DIR__ . '/../public/uploads/events/' . $imageName
+            );
+
+            // Update image only if new file uploaded
+            $data['image'] = $imageName;
+        }
+
         event_update($id, $data);
         $_SESSION['success'] = "Event updated successfully.";
         redirect('/admin/events');
